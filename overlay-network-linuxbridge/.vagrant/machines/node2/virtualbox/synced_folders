@@ -1,0 +1,1 @@
+{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"/opt/git-workspace/github/other/linux-network-bridge/overlay-network-linuxbridge","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}

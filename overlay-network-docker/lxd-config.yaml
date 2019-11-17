@@ -1,0 +1,19 @@
+config:
+  images.auto_update_interval: "0"
+networks: []
+storage_pools:
+- config:
+    size: 15GB
+  description: ""
+  name: default
+  driver: btrfs
+profiles:
+- config: {}
+  description: ""
+  devices:
+    root:
+      path: /
+      pool: default
+      type: disk
+  name: default
+cluster: null

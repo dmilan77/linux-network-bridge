@@ -1,0 +1,34 @@
+# Vagrantfile
+
+Vagrant.configure('2') do |config|
+  config.vm.box = "debian/stretch64"
+  config.vm.box_version = "9.9.1"
+
+  config.vm.provision "shell", inline: <<~SHELL
+     apt-get update
+     apt install bind-utils -y
+     apt install network-manager -y
+     apt install bridge-utils -y
+     apt install snapd -y
+     apt install net-tools -y
+     apt-get install software-properties-common
+     apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
+     curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+     apt-get update && \
+     apt-get install docker-ce docker-ce-cli containerd.io -y
+
+     #apt install tshark -y
+     #snap install lxd
+  SHELL
+
+  config.vm.define 'node1' do |node|
+    node.vm.hostname = 'node1'
+    node.vm.network 'private_network', ip: '100.0.0.28'
+  end
+
+  config.vm.define 'node2' do |node|
+    node.vm.hostname = 'node2'
+    node.vm.network 'private_network', ip: '100.0.0.31'
+  end
+end

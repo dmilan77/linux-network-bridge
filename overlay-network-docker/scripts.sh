@@ -1,15 +1,6 @@
-apt-get update && \
-apt install network-manager -y && \
-apt install bridge-utils -y && \
-apt install snapd -y  && \
-apt install net-tools -y && \
-snap install lxd
-#apt install tshark -y
-
-
 # node1 & node2
 ## Create vxlan
-ip link add vxlan10 type vxlan id 10 group 239.1.1.1 dstport 0 dev eth0
+ip link add vxlan10 type vxlan id 10 group 239.1.1.1 dstport 0 dev eth1
 ## Create linux bridge 
 ip link add br-vxlan10 type bridge
 ## connect bridge to vxlan

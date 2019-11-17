@@ -1,3 +1,13 @@
+apt-get update && \
+apt install bind-utils -y && \
+apt install network-manager -y && \
+apt install bridge-utils -y && \
+apt install snapd -y  && \
+apt install net-tools -y && \
+snap install lxd
+#apt install tshark -y
+
+
 # node1 & node2
 ## Create vxlan
 ip link add vxlan10 type vxlan id 10 group 239.1.1.1 dstport 0 dev eth0
@@ -10,6 +20,28 @@ ip link set vxlan10 up
 ip link set br-vxlan10 up
 
 # create a profile as per the options below
+cat <<EOF | lxd init --preseed
+config:
+  images.auto_update_interval: "0"
+networks: []
+storage_pools:
+- config:
+    size: 15GB
+  description: ""
+  name: default
+  driver: btrfs
+profiles:
+- config: {}
+  description: ""
+  devices:
+    root:
+      path: /
+      pool: default
+      type: disk
+  name: default
+cluster: null
+EOF
+########################
 
 # Cretae a profile Attach profile to vxlan10
 lxc profile create vxlan10

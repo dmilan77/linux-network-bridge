@@ -10,6 +10,8 @@ Vagrant.configure('2') do |config|
      apt install network-manager -y
      apt install bridge-utils -y
      apt install snapd -y
+     apt install net-tools -y
+     #apt install tshark -y
      snap install lxd
   SHELL
 

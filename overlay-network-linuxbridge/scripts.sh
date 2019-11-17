@@ -10,22 +10,27 @@ ip link set vxlan10 up
 ip link set br-vxlan10 up
 
 # create a profile as per the options below
-lxd init
-########################
-# root@node1:~# lxd init
-# Would you like to use LXD clustering? (yes/no) [default=no]:
-# Do you want to configure a new storage pool? (yes/no) [default=yes]:
-# Name of the new storage pool [default=default]:
-# Name of the storage backend to use (btrfs, ceph, dir, lvm) [default=btrfs]:
-# Create a new BTRFS pool? (yes/no) [default=yes]:
-# Would you like to use an existing block device? (yes/no) [default=no]:
-# Size in GB of the new loop device (1GB minimum) [default=15GB]:
-# Would you like to connect to a MAAS server? (yes/no) [default=no]:
-# Would you like to create a new local network bridge? (yes/no) [default=yes]: no
-# Would you like to configure LXD to use an existing bridge or host interface? (yes/no) [default=no]: no
-# Would you like LXD to be available over the network? (yes/no) [default=no]:
-# Would you like stale cached images to be updated automatically? (yes/no) [default=yes] no
-# Would you like a YAML "lxd init" preseed to be printed? (yes/no) [default=no]:
+cat <<EOF | lxd init --preseed
+config:
+  images.auto_update_interval: "0"
+networks: []
+storage_pools:
+- config:
+    size: 15GB
+  description: ""
+  name: default
+  driver: btrfs
+profiles:
+- config: {}
+  description: ""
+  devices:
+    root:
+      path: /
+      pool: default
+      type: disk
+  name: default
+cluster: null
+EOF
 ########################
 
 # Cretae a profile Attach profile to vxlan10

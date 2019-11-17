@@ -1,0 +1,22 @@
+# Vagrantfile
+
+Vagrant.configure('2') do |config|
+  config.vm.box = "debian/stretch64"
+  config.vm.box_version = "9.9.1"
+
+  config.vm.provision "shell", inline: <<~SHELL
+     apt-get update
+     apt install bind-utils -y
+     apt install network-manager -y
+     apt install bridge-utils -y
+     apt install snapd -y
+     apt install tree -y
+     #snap install lxd
+  SHELL
+
+  config.vm.define 'node1' do |node|
+    node.vm.hostname = 'linux-node-1'
+    node.vm.network 'private_network', ip: '100.0.0.18'
+  end
+
+end

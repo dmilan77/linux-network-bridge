@@ -1,0 +1,24 @@
+# Vagrantfile
+
+Vagrant.configure('2') do |config|
+  config.vm.box = "debian/stretch64"
+  config.vm.box_version = "9.9.1"
+
+  config.vm.provision "shell", inline: <<~SHELL
+     apt-get update
+     apt-get install qemu-kvm  -y
+     apt-get install openvswitch-switch -y
+     systemctl start openvswitch-switch
+     systemctl enable openvswitch-switch
+  SHELL
+
+  config.vm.define 'node1' do |node|
+    node.vm.hostname = 'node1'
+    node.vm.network 'private_network', ip: '192.168.50.11'
+  end
+
+  config.vm.define 'node2' do |node|
+    node.vm.hostname = 'node2'
+    node.vm.network 'private_network', ip: '192.168.50.12'
+  end
+end

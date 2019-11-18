@@ -1,52 +1,28 @@
-# node1 & node2
-## Create vxlan
-ip link add vxlan10 type vxlan id 10 group 239.1.1.1 dstport 0 dev eth1
-## Create linux bridge 
-ip link add br-vxlan10 type bridge
-## connect bridge to vxlan
-ip link set vxlan10 master br-vxlan10
-## Start
-ip link set vxlan10 up
-ip link set br-vxlan10 up
+# node1 and node2
+docker network prune
+# node1
+docker swarm init --advertise-addr=100.0.0.28
+# node2
+docker swarm join --token SWMTKN-1-079p3x2mnrpillk2sdumczlu0bi1v3adschrqr398km3o136wm-f1nf4904p4yir9owmkrth91dd 100.0.0.28:2377
+docker node ls
 
-# create a profile as per the options below
-cat <<EOF | lxd init --preseed
-config:
-  images.auto_update_interval: "0"
-networks: []
-storage_pools:
-- config:
-    size: 15GB
-  description: ""
-  name: default
-  driver: btrfs
-profiles:
-- config: {}
-  description: ""
-  devices:
-    root:
-      path: /
-      pool: default
-      type: disk
-  name: default
-cluster: null
-EOF
-########################
+# Overlay Network Creation on Node 1
 
-# Cretae a profile Attach profile to vxlan10
-lxc profile create vxlan10
-lxc network attach-profile br-vxlan10 vxlan10
+# node 1
+docker network create --driver=overlay --attachable kubeatl-overlay-net
+docker network ls
+
 
 # node1
-lxc launch images:alpine/3.8 node1-alpine -p vxlan10 -s default
-# wait sleep 10 # to wait for the container to be up and ready
-lxc exec node1-alpine ip addr add 192.168.1.1/24 dev eth0
+docker run -it --name node1-alpine --network kubeatl-overlay-net dmilan/alpine-plus
 
-# node2
-lxc launch images:alpine/3.8 node2-alpine -p vxlan10 -s default
-lxc exec node2-alpine ip addr add 192.168.1.2/24 dev eth0
+# node 2
+docker run -it --name node2-alpine  --network kubeatl-overlay-net dmilan/alpine-plus
 
+# node1
+ping -c 2 node2-alpine
+nc -l -p 8083
 
-# testing
-lxc exec node1-alpine -- nc -l -p 9999
-lxc exec node2-alpine -- nc 192.168.1.1 9999
+#node2
+ping -c 2 node1-alpine
+nc node1-alpine 8083

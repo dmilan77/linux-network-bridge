@@ -2,8 +2,11 @@
 docker network prune
 # node1
 docker swarm init --advertise-addr=100.0.0.28
+docker network rm gie1b2t281sb
 # node2
 docker swarm join --token SWMTKN-1-079p3x2mnrpillk2sdumczlu0bi1v3adschrqr398km3o136wm-f1nf4904p4yir9owmkrth91dd 100.0.0.28:2377
+# docker swarm join-token manager
+
 docker node ls
 
 # Overlay Network Creation on Node 1

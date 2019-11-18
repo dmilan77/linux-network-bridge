@@ -1,26 +1,25 @@
-# node1 and node2
-docker network prune
+
 # node1
-docker swarm init --advertise-addr=100.0.0.28
-docker network rm gie1b2t281sb
-# node2
-docker swarm join --token SWMTKN-1-079p3x2mnrpillk2sdumczlu0bi1v3adschrqr398km3o136wm-f1nf4904p4yir9owmkrth91dd 100.0.0.28:2377
-# docker swarm join-token manager
-
-docker node ls
-
-# Overlay Network Creation on Node 1
-
-# node 1
+docker network ls
+ip a
+docker swarm init --advertise-addr=172.31.23.174
+docker network ls
+docker network rm wdptejml5nr4
 docker network create --driver=overlay --attachable kubeatl-overlay-net
 docker network ls
+docker swarm join-token manager
 
+#node 2
+docker swarm join --token SWMTKN-1-1eumpzznnpt3e0osfwfgh968c2hbzjkg52t72pd4yhldbn6ndl-86gfaoyzgaih9ekzvn45iuxvr 172.31.23.174:2377
+docker network ls
 
-# node1
+#node 1
 docker run -it --name node1-alpine --network kubeatl-overlay-net dmilan/alpine-plus
 
-# node 2
+#node 2
 docker run -it --name node2-alpine  --network kubeatl-overlay-net dmilan/alpine-plus
+
+
 
 # node1
 ping -c 2 node2-alpine
